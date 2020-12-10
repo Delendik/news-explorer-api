@@ -14,7 +14,7 @@ const cors = require('cors');
 const { limiter } = require('./middlewares/rateLimiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/newsdb' } = process.env;
+const { PORT = 4000, MONGO_URL = 'mongodb://localhost:27017/newsdb' } = process.env;
 
 const routes = require('./routes/index.js');
 

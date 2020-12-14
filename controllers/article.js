@@ -2,10 +2,12 @@ const Article = require('../models/article');
 
 const NotFoundError = require('../errors/notFoundError');
 const Forbidden = require('../errors/forbidden');
+const errors = require('../utils/const');
 
 module.exports.readArticles = async (req, res, next) => {
   try {
-    const article = await Article.find({});
+    const owner = req.user._id;
+    const article = await Article.find({ owner });
     res.send(article);
   } catch (err) {
     console.log('err = ', err.message);
@@ -32,15 +34,12 @@ module.exports.createArticle = async (req, res, next) => {
 
 module.exports.deleteArticle = async (req, res, next) => {
   try {
-    console.log(req.params);
-    console.log(req.user);
     const { _id } = req.params;
     const articleForDelete = await Article.findById({ _id }).select('+owner');
-    console.log('articleForDelete:', articleForDelete);
     if (articleForDelete === null) {
-      throw new NotFoundError('Нет карточки с таким id');
+      throw new NotFoundError(errors.noCard);
     } else if (req.user._id !== articleForDelete.owner.toString()) {
-      throw new Forbidden('Карточку создал другой пользователь');
+      throw new Forbidden(errors.otherUser);
     }
     const article = await Article.findOneAndRemove({ _id });
     res.status(200).send(article);

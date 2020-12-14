@@ -7,13 +7,14 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/notFoundError');
 const ConflictError = require('../errors/conflictError');
 const InvalidData = require('../errors/invalidData');
+const errors = require('../utils/const');
 
 const readUser = async (req, res, next) => {
   try {
     const { _id } = req.user;
     const user = await User.findById({ _id });
     if (!user) {
-      throw new NotFoundError('Нет пользователя с таким id');
+      throw new NotFoundError(errors.noUser);
     }
     res.status(200).send(user);
   } catch (err) {
@@ -29,7 +30,7 @@ const createUser = async (req, res, next) => {
     } = req.body;
     const existUser = await User.findOne({ email });
     if (existUser) {
-      throw new ConflictError('Пользователь с таким email уже существует');
+      throw new ConflictError(errors.noEmail);
     } else {
       const password = await bcrypt.hash(req.body.password, 10);
       const { _id } = await User.create({
@@ -51,13 +52,13 @@ const login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new InvalidData('Неверный пользователь');
+        throw new InvalidData(errors.invalidLoginData);
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new InvalidData('Неверный пароль');
+            throw new InvalidData(errors.invalidLoginData);
           }
 
           return user;

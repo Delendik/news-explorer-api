@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 const { default: validator } = require('validator');
+const errors = require('../utils/const');
 
 const validateArticle = celebrate({
   body: Joi.object().keys({
@@ -12,20 +13,20 @@ const validateArticle = celebrate({
       if (validator.isURL(value)) {
         return value;
       }
-      return helpers.message('Поле должно соответствовать url-адресу');
+      return helpers.message(errors.noUrl);
     }),
     image: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
-      return helpers.message('Поле должно соответствовать url-адресу');
+      return helpers.message(errors.noUrl);
     }),
   }),
 });
 
 const validateAtricleId = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().alphanum().length(24),
+    _id: Joi.string().hex().length(24),
   }),
 });
 
@@ -49,4 +50,4 @@ module.exports = {
   validateAtricleId,
   validateSignin,
   validateSignup,
-}
+};

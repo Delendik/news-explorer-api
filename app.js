@@ -14,7 +14,11 @@ const cors = require('cors');
 const { limiter } = require('./middlewares/rateLimiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/newsdb' } = process.env;
+const config = require('./utils/config');
+
+const checkError = require('./middlewares/checkError');
+
+const { PORT = 3000, MONGO_URL = config.devUrl } = process.env;
 
 const routes = require('./routes/index.js');
 
@@ -41,15 +45,7 @@ app.use(errors());
 app.use(errorLogger);
 
 app.use((err, req, res, next) => {
-  console.log(err);
-  if (err.name === 'CastError' || err.name === 'ValidationError') {
-    res.status(400).send({ message: 'Некорректные данные' });
-  } else if (err.statusCode) {
-    res.status(err.statusCode).send({ message: err.message });
-  } else {
-    res.status(500).send({ message: 'Ошибка на сервере' });
-  }
-  next();
+  checkError(err, req, res, next);
 });
 
 app.listen(PORT, () => {

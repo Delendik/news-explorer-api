@@ -8,6 +8,7 @@ const NotFoundError = require('../errors/notFoundError');
 const ConflictError = require('../errors/conflictError');
 const InvalidData = require('../errors/invalidData');
 const errors = require('../utils/const');
+const config = require('../utils/config');
 
 const readUser = async (req, res, next) => {
   try {
@@ -67,7 +68,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        NODE_ENV === 'production' ? JWT_SECRET : config.devJwt,
         { expiresIn: '7d' },
       );
       res.send({ token });

@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 
 const cors = require('cors');
 
-const { limiter } = require('./middlewares/rateLimiter');
+// const { limiter } = require('./middlewares/rateLimiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const config = require('./utils/config');
@@ -33,7 +33,7 @@ app.use(express.json());
 
 app.use(helmet.contentSecurityPolicy());
 
-app.use(limiter);
+// app.use(limiter);
 app.use(cors());
 
 app.use(requestLogger);
